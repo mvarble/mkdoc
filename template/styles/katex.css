@@ -1,0 +1,53 @@
+/* `katex/dist/katex.min.css` is imported from the client entry, which is what
+ * makes Vite emit the `woff2` files alongside the page. This file only adjusts
+ * how the rendered math sits in the prose. */
+
+/* Display math is one unbreakable box. `rehypeMathBox` wraps it in these two
+ * containers so a long equation slides sideways on its own, fading out at the
+ * edges rather than being clipped. */
+.math-scroll-container {
+    overflow-x: auto;
+    flex-grow: 1;
+    --fading-size: 3em;
+    mask-image: linear-gradient(to right,
+            transparent 0%,
+            black var(--fading-size),
+            black calc(100% - var(--fading-size)),
+            transparent);
+    -webkit-mask-image: linear-gradient(to right,
+            transparent 0%,
+            black var(--fading-size),
+            black calc(100% - var(--fading-size)),
+            transparent);
+}
+
+.katex-html {
+    display: inline-block;
+}
+
+.katex {
+    line-height: 1;
+    font-size: 1.1rem;
+}
+
+.katex-display {
+    margin: 0.5em 0 !important;
+
+    & .base:first-child {
+        margin-left: var(--fading-size) !important;
+    }
+
+    & .base:last-child {
+        margin-right: var(--fading-size) !important;
+    }
+}
+
+@media (min-resolution: 1.75x) {
+    .katex {
+        font-size: 1.32rem;
+    }
+}
+
+blockquote .katex {
+    font-size: 0.99rem;
+}
