@@ -8,16 +8,24 @@ const THEMES = { light: 'vitesse-light', dark: 'vitesse-dark' } as const;
 // The blog names its languages up front because it knows them; a tool pointed at
 // an arbitrary document does not, and loading all of Shiki's grammars eagerly
 // costs seconds. Languages are loaded the first time a fence asks for one.
-let highlighter: Highlighter | undefined;
-const loaded = new Set<string>();
+//
+// Both caches hold the *promise* rather than what it settles to. mdsvex
+// highlights a document's fences concurrently, through `Promise.all`, so a
+// cache filled in after an `await` is empty for every call already in flight:
+// two fences would each build a highlighter, and the language one of them loaded
+// would be loaded into a highlighter the other never sees. That fails as
+// "Language `json` not found", on the second language a document uses.
+let highlighter: Promise<Highlighter> | undefined;
+const loaded = new Map<string, Promise<void>>();
 
-async function languageFor(lang: string | null | undefined): Promise<string> {
-    highlighter ??= await createHighlighter({ themes: Object.values(THEMES), langs: [] });
+const highlighterFor = () =>
+    (highlighter ??= createHighlighter({ themes: Object.values(THEMES), langs: [] }));
+
+async function languageFor(shiki: Highlighter, lang: string | null | undefined): Promise<string> {
     if (!lang || !(lang in bundledLanguages)) return 'text';
-    if (!loaded.has(lang)) {
-        await highlighter.loadLanguage(lang as keyof typeof bundledLanguages);
-        loaded.add(lang);
-    }
+    const load = loaded.get(lang) ?? shiki.loadLanguage(lang as keyof typeof bundledLanguages);
+    loaded.set(lang, load);
+    await load;
     return lang;
 }
 
@@ -39,9 +47,9 @@ export async function highlight(
         lang = path.extname(imported).slice(1);
     }
 
-    highlighter ??= await createHighlighter({ themes: Object.values(THEMES), langs: [] });
+    const shiki = await highlighterFor();
     const html = escapeSvelte(
-        highlighter.codeToHtml(code, { lang: await languageFor(lang), themes: THEMES }),
+        shiki.codeToHtml(code, { lang: await languageFor(shiki, lang), themes: THEMES }),
     );
     return `{@html \`${html}\` }`;
 }

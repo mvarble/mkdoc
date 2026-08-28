@@ -13,10 +13,16 @@
   "engines": {
     "node": ">=22"
   },
+  "mkdoc": {
+    "modules": [
+      "three"
+    ]
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
     "example": "node dist/cli.js dev example/measures.md",
+    "example:scene": "node dist/cli.js dev example/scene.svx",
     "format": "prettier --write .",
     "lint": "prettier --check . && tsc -p tsconfig.json --noEmit",
     "prepare": "tsc -p tsconfig.json"
@@ -30,6 +36,7 @@
     "remark-math": "3.0.0",
     "shiki": "^4.4.3",
     "svelte": "^5.56.1",
+    "three": "^0.185.1",
     "vite": "^8.0.16"
   },
   "devDependencies": {

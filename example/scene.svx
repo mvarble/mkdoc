@@ -1,0 +1,94 @@
+---
+title: A cube, from three.js
+description: A module installed in mkdoc, imported by a document.
+---
+
+<script>
+    import { onMount } from 'svelte';
+    import * as THREE from 'three';
+
+    let canvas;
+
+    onMount(() => {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
+        camera.position.set(2.4, 1.8, 2.4);
+        camera.lookAt(0, 0, 0);
+
+        const cube = new THREE.Mesh(
+            new THREE.BoxGeometry(),
+            new THREE.MeshStandardMaterial({ color: 0x6688cc, roughness: 0.45 }),
+        );
+        scene.add(cube);
+        scene.add(new THREE.AmbientLight(0xffffff, 1.4));
+
+        const key = new THREE.DirectionalLight(0xffffff, 2.2);
+        key.position.set(3, 4, 2);
+        scene.add(key);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(width, height, false);
+
+        let frame;
+        const draw = (time) => {
+            cube.rotation.x = time / 2600;
+            cube.rotation.y = time / 1700;
+            renderer.render(scene, camera);
+            frame = requestAnimationFrame(draw);
+        };
+        frame = requestAnimationFrame(draw);
+
+        // The dev server swaps this component in place on every save, so the
+        // previous run's loop and its GPU context have to go with it.
+        return () => {
+            cancelAnimationFrame(frame);
+            renderer.dispose();
+        };
+    });
+</script>
+
+<canvas bind:this={canvas} width="640" height="360" style="width: 100%; height: auto;"></canvas>
+
+The cube above is drawn by [three.js](https://threejs.org), which is not
+installed anywhere near this document. It is installed in mkdoc, and listed
+under `mkdoc.modules` in mkdoc's own `package.json`:
+
+```json
+{
+    "mkdoc": {
+        "modules": ["three"]
+    }
+}
+```
+
+That is the whole arrangement. A document imports the module by name, the way it
+would in a project that had one:
+
+```svelte
+<script>
+    import * as THREE from 'three';
+</script>
+```
+
+Nothing is bundled for being on the list. A document that never mentions three
+still builds to a page with no JavaScript in it at all --- the list only decides
+what a document is *allowed* to reach for.
+
+The `<script>` block is also what makes this page ship its bundle: mkdoc assumes
+a document with one has something to run, and hydrates it. `hydrate: false` in
+the frontmatter would leave the canvas blank.
+
+## Building it
+
+A hydrated page needs to be served over HTTP --- browsers refuse to load ES
+modules from `file://` --- so this one does not open off the filesystem the way
+a static page does:
+
+```sh
+mkdoc build example/scene.svx
+python3 -m http.server -d build/scene
+```

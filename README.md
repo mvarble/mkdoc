@@ -60,6 +60,35 @@ So do `<script>` imports in a `.svx` document, including other Svelte components
 **Code**, highlighted by Shiki in a light and a dark theme at once.
 A fence whose entire body is `{./path/to/file}` is replaced by that file's contents; add a range as `{./path/to/file:10..20}`.
 
+**Modules installed in mkdoc.** A document sits wherever you keep it, with no `node_modules` above it, so a package has to be installed here and named before a document may reach for it:
+
+```sh
+pnpm add three
+```
+
+```json
+{
+    "mkdoc": {
+        "modules": ["three"]
+    }
+}
+```
+
+From then on any document imports it by name, the way it would in a project that had one:
+
+```svelte
+<script>
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+</script>
+```
+
+Nothing is bundled for being on the list --- a module ships only with a page that actually imports it, and a document that imports none still builds to a page with no JavaScript in it.
+The list only decides what is _reachable_; see `example/scene.svx` for a working one.
+
+Two things worth knowing. The `<script>` block is also what makes such a page ship its bundle, so no extra flag is needed.
+And the build renders the document under Node once, to produce the static HTML --- a library that touches `window` while it is being imported will fail there, and the way round it is to `import()` the library inside `onMount` instead, where it only ever runs in a browser.
+
 **Frontmatter.** `title`, `description`, `author`, `date` and `lang` are used by the template.
 `css` names one or more stylesheets, relative to the document, that are loaded after mkdoc's own --- which is how you override anything about the look.
 `hydrate` decides whether the page ships JavaScript.
@@ -98,5 +127,5 @@ pnpm build                          # tsc, into dist/
 node dist/cli.js dev example/measures.md
 ```
 
-`src/` is the CLI: `document.ts` reads the frontmatter that configures the build, `vite.ts` assembles the Vite config both commands share, and `markdown/` holds the remark and rehype plugins.
+`src/` is the CLI: `document.ts` reads the frontmatter that configures the build, `modules.ts` reads the `mkdoc.modules` list, `vite.ts` assembles the Vite config both commands share, and `markdown/` holds the remark and rehype plugins.
 `template/` is the page itself --- the HTML shell, the Svelte layout and the stylesheets --- and is consumed by Vite at runtime rather than compiled by `tsc`.
