@@ -1,7 +1,29 @@
 {
-  "name": "mkdoc",
+  "name": "@mvarble/mkdoc",
   "version": "0.0.3",
   "description": "Build a standalone webpage out of a single markdown or mdsvex document.",
+  "license": "MIT",
+  "author": "Matthew Varble <matthew@rodent.club>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mvarble/mkdoc.git"
+  },
+  "homepage": "https://github.com/mvarble/mkdoc#readme",
+  "bugs": {
+    "url": "https://github.com/mvarble/mkdoc/issues"
+  },
+  "keywords": [
+    "markdown",
+    "mdsvex",
+    "svelte",
+    "katex",
+    "static-site",
+    "cli",
+    "vite"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "mkdoc": "./dist/cli.js"

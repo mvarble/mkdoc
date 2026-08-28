@@ -12,6 +12,8 @@ The template and the whole parser configuration are baked into the CLI, so a doc
 
 ## Getting it on your PATH
 
+The simplest install is `npm i -g @mvarble/mkdoc` (or `pnpm add -g @mvarble/mkdoc`), which puts the `mkdoc` command on your PATH.
+
 `mkdoc` is an ordinary npm bin, so any global install puts it there.
 While you are still tuning the parser configuration, link the working copy --- the command then runs the code in this checkout, and an edit to `template/` or a `pnpm build` takes effect on the very next `mkdoc` run, with no reinstall:
 
@@ -27,7 +29,7 @@ npm i -g .          # copies, and runs `prepare` to build dist/ for you
 ```
 
 Note that `pnpm add -g <directory>` links rather than copies, and does not run `prepare` --- run `pnpm build` first if you go that way.
-Uninstall with `pnpm uninstall -g mkdoc`.
+Uninstall with `pnpm uninstall -g @mvarble/mkdoc`.
 
 Both land in a directory that is already on your PATH: pnpm uses `$PNPM_HOME`, npm uses its configured prefix.
 If node is managed by fnm or nvm, npm's prefix lives inside the active node version, so an `npm i -g` install disappears when you switch versions; pnpm's does not.
