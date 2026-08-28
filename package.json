@@ -1,55 +1,77 @@
 {
-  "name": "mkdoc",
-  "version": "0.0.2",
-  "description": "Build a standalone webpage out of a single markdown or mdsvex document.",
-  "type": "module",
-  "bin": {
-    "mkdoc": "./dist/cli.js"
-  },
-  "files": [
-    "dist",
-    "template"
-  ],
-  "engines": {
-    "node": ">=22"
-  },
-  "mkdoc": {
-    "modules": [
-      "three"
-    ]
-  },
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsc -p tsconfig.json --watch",
-    "example": "node dist/cli.js dev example/measures.md",
-    "example:scene": "node dist/cli.js dev example/scene.svx",
-    "format": "prettier --write .",
-    "lint": "prettier --check . && tsc -p tsconfig.json --noEmit",
-    "prepare": "tsc -p tsconfig.json"
-  },
-  "dependencies": {
-    "@sveltejs/vite-plugin-svelte": "^7.1.2",
-    "js-yaml": "^4.1.0",
-    "katex": "^0.18.4",
-    "mdsvex": "^0.12.7",
-    "remark-frontmatter": "^2.0.0",
-    "remark-math": "3.0.0",
-    "shiki": "^4.4.3",
-    "svelte": "^5.56.1",
-    "three": "^0.185.1",
-    "vite": "^8.0.16"
-  },
-  "devDependencies": {
-    "@types/hast": "^3.0.5",
-    "@types/js-yaml": "^4.0.9",
-    "@types/katex": "^0.16.7",
-    "@types/mdast": "^4.0.4",
-    "@types/node": "^22.14.0",
-    "@types/unist": "^3.0.3",
-    "prettier": "^3.9.6",
-    "prettier-plugin-svelte": "^4.1.1",
-    "typescript": "^6.0.3",
-    "unified": "^11.0.5",
-    "vfile": "^6.0.3"
-  }
+    "name": "@mvarble/mkdoc",
+    "version": "0.0.2",
+    "description": "Build a standalone webpage out of a single markdown or mdsvex document.",
+    "license": "MIT",
+    "author": "Matthew Varble <matthew@rodent.club>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mvarble/mkdoc.git"
+    },
+    "homepage": "https://github.com/mvarble/mkdoc#readme",
+    "bugs": {
+        "url": "https://github.com/mvarble/mkdoc/issues"
+    },
+    "keywords": [
+        "markdown",
+        "mdsvex",
+        "svelte",
+        "katex",
+        "static-site",
+        "cli",
+        "vite"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "type": "module",
+    "bin": {
+        "mkdoc": "./dist/cli.js"
+    },
+    "files": [
+        "dist",
+        "template"
+    ],
+    "engines": {
+        "node": ">=22"
+    },
+    "mkdoc": {
+        "modules": [
+            "three"
+        ]
+    },
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "dev": "tsc -p tsconfig.json --watch",
+        "example": "node dist/cli.js dev example/measures.md",
+        "example:scene": "node dist/cli.js dev example/scene.svx",
+        "format": "prettier --write .",
+        "lint": "prettier --check . && tsc -p tsconfig.json --noEmit",
+        "prepare": "tsc -p tsconfig.json"
+    },
+    "dependencies": {
+        "@sveltejs/vite-plugin-svelte": "^7.1.2",
+        "js-yaml": "^4.1.0",
+        "katex": "^0.18.4",
+        "mdsvex": "^0.12.7",
+        "remark-frontmatter": "^2.0.0",
+        "remark-math": "3.0.0",
+        "shiki": "^4.4.3",
+        "svelte": "^5.56.1",
+        "three": "^0.185.1",
+        "vite": "^8.0.16"
+    },
+    "devDependencies": {
+        "@types/hast": "^3.0.5",
+        "@types/js-yaml": "^4.0.9",
+        "@types/katex": "^0.16.7",
+        "@types/mdast": "^4.0.4",
+        "@types/node": "^22.14.0",
+        "@types/unist": "^3.0.3",
+        "prettier": "^3.9.6",
+        "prettier-plugin-svelte": "^4.1.1",
+        "typescript": "^6.0.3",
+        "unified": "^11.0.5",
+        "vfile": "^6.0.3"
+    }
 }
