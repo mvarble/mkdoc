@@ -1,4 +1,5 @@
 import 'katex/dist/katex.min.css';
+import '@fontsource/fira-mono';
 import './styles/index.css';
 import 'virtual:mkdoc/styles';
 

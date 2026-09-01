@@ -9,20 +9,16 @@
     overflow-x: auto;
     flex-grow: 1;
     --fading-size: 3em;
-    mask-image: linear-gradient(
-        to right,
-        transparent 0%,
-        black var(--fading-size),
-        black calc(100% - var(--fading-size)),
-        transparent
-    );
-    -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0%,
-        black var(--fading-size),
-        black calc(100% - var(--fading-size)),
-        transparent
-    );
+    mask-image: linear-gradient(to right,
+            transparent 0%,
+            black var(--fading-size),
+            black calc(100% - var(--fading-size)),
+            transparent);
+    -webkit-mask-image: linear-gradient(to right,
+            transparent 0%,
+            black var(--fading-size),
+            black calc(100% - var(--fading-size)),
+            transparent);
 }
 
 .katex-html {
@@ -31,7 +27,7 @@
 
 .katex {
     line-height: 1;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .katex-display {
