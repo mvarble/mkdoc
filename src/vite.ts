@@ -1,9 +1,9 @@
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { isBuiltin } from 'node:module';
+import { createRequire, isBuiltin } from 'node:module';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import type { InlineConfig, Plugin } from 'vite';
+import type { InlineConfig, Plugin, Rolldown } from 'vite';
 
 import type { Document } from './document.js';
 import { packageDir, templateDir } from './paths.js';
@@ -68,11 +68,37 @@ function moduleDiagnostics(): Plugin {
     };
 }
 
+// Resolves the template's own `.svelte` imports for Vite's dependency scanner.
+//
+// Installed from a registry, this package --- template and all --- sits under a
+// `node_modules`. `vite-plugin-svelte` adds `.svelte` to
+// `optimizeDeps.extensions`, and the scanner takes any `.svelte` file under a
+// `node_modules` to be a library component it should prebundle rather than
+// crawl, so it declines to resolve one. Rolldown's own resolver then gets the
+// import, but the scanner hands it a `virtual-module:` importer for the script
+// block it lifted out of `Page.svelte`, and `./Layout.svelte` cannot be resolved
+// against that. The scan fails, pre-bundling is skipped, and the dev server
+// finds its dependencies one page reload at a time.
+//
+// Only relative `.svelte` imports from inside the template are answered: every
+// other kind of import the scanner already resolves on its own.
+function templateScan(): Rolldown.Plugin {
+    return {
+        name: 'mkdoc:template-scan',
+        resolveId(id, importer) {
+            if (!importer || !id.startsWith('.') || !id.endsWith('.svelte')) return null;
+            const file = importer.replace(/^virtual-module:/, '').replace(/[?#].*$/, '');
+            if (!isInside(templateDir, file)) return null;
+            return path.resolve(path.dirname(file), id);
+        },
+    };
+}
+
 // The separator matters: a document kept in a sibling directory whose name
 // merely starts with this one's --- `mkdoc-notes` next to `mkdoc` --- is not
 // inside the package, and should still get the message.
-const isInsidePackage = (file: string) =>
-    file == packageDir || file.startsWith(packageDir + path.sep);
+const isInside = (dir: string, file: string) => file == dir || file.startsWith(dir + path.sep);
+const isInsidePackage = (file: string) => isInside(packageDir, file);
 
 // Neither relative, nor absolute, nor a URL --- Vite's own test for the kind of
 // specifier that is resolved out of `node_modules`.
@@ -84,6 +110,13 @@ function packageNameOf(id: string): string {
     const parts = id.split('/');
     return id.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0]!;
 }
+
+// Packages the template pulls stylesheets --- and through them, font files ---
+// out of. A package manager that hoists dependencies installs these beside this
+// package rather than inside it, where the dev server would refuse the fonts.
+const STYLE_PACKAGES = ['katex', '@fontsource/fira-mono'];
+const require = createRequire(import.meta.url);
+const packageRoot = (name: string) => path.dirname(require.resolve(`${name}/package.json`));
 
 // Somewhere writable that is not the package directory: a globally installed
 // CLI may sit in a directory it cannot write to, and Vite wants to put its
@@ -134,6 +167,7 @@ export function mkdocConfig(document: Document, options: ConfigOptions = {}): In
             // a full page reload, which in this tool is indistinguishable from
             // the dev server having lost track of the document.
             include: installedClientModules(),
+            rolldownOptions: { plugins: [templateScan()] },
         },
         define: { __MKDOC_HYDRATE__: JSON.stringify(document.hydrate) },
         build: {
@@ -158,7 +192,7 @@ export function mkdocConfig(document: Document, options: ConfigOptions = {}): In
         server: {
             // The document and its images are outside `root`, so the dev server
             // has to be told they may be served.
-            fs: { allow: [packageDir, document.dirname] },
+            fs: { allow: [packageDir, document.dirname, ...STYLE_PACKAGES.map(packageRoot)] },
         },
         plugins: [
             userStyles(document),
