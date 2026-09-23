@@ -5,6 +5,7 @@ Build a webpage out of a single markdown or mdsvex document.
 ```sh
 mkdoc dev notes/measures.md      # live-reloading server while you write
 mkdoc build notes/measures.md    # a static page in build/measures/
+mkdoc dev notes/                 # browse a directory, previewing any document in it
 ```
 
 The point is to get what a well-configured Vite project gives you --- KaTeX rendered at build time, syntax highlighting, images and scripts referenced relative to the document --- without a project.
@@ -96,6 +97,13 @@ And the build renders the document under Node once, to produce the static HTML -
 `hydrate` decides whether the page ships JavaScript.
 Any other field is passed to the template as a prop.
 
+## Browsing a directory
+
+`mkdoc dev <directory>` serves the directory as a plain file listing.
+Clicking a `.md` or `.svx` opens it at its own URL (`notes/measures.md` at `/notes/measures.md/`), live-reloading exactly as `mkdoc dev notes/measures.md` would; every other file is served as-is.
+Each document gets its own dev server the first time you open it, so the first visit takes a moment and later ones do not.
+`--hydrate` and `--no-hydrate` apply to every document opened this way.
+
 ## Static by default
 
 A plain markdown document has nothing to run, so the built page contains no JavaScript at all: the HTML, one stylesheet, and the KaTeX fonts.
@@ -110,6 +118,7 @@ Pass `--base /some/prefix/` if you are serving it from a subdirectory.
 ```
 mkdoc build <document>    write a static page (the default command)
 mkdoc dev <document>      serve the document, rebuilding it as you type
+mkdoc dev <directory>     browse a directory, serving each document you open
 
   -o, --out <dir>     where to write the page   (default: build/<document>)
       --base <path>   URL prefix for the page's own files   (default: ./)
@@ -129,5 +138,5 @@ pnpm build                          # tsc, into dist/
 node dist/cli.js dev example/measures.md
 ```
 
-`src/` is the CLI: `document.ts` reads the frontmatter that configures the build, `modules.ts` reads the `mkdoc.modules` list, `vite.ts` assembles the Vite config both commands share, and `markdown/` holds the remark and rehype plugins.
+`src/` is the CLI: `dev.ts` and `directory.ts` are the two dev servers, `document.ts` reads the frontmatter that configures the build, `modules.ts` reads the `mkdoc.modules` list, `vite.ts` assembles the Vite config both commands share, and `markdown/` holds the remark and rehype plugins.
 `template/` is the page itself --- the HTML shell, the Svelte layout and the stylesheets --- and is consumed by Vite at runtime rather than compiled by `tsc`.

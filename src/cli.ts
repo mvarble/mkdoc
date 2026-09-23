@@ -6,6 +6,7 @@ import { parseArgs } from 'node:util';
 import { readDocument } from './document.js';
 import { buildDocument } from './build.js';
 import { serveDocument } from './dev.js';
+import { serveDirectory } from './directory.js';
 import { packageDir } from './paths.js';
 
 const USAGE = `
@@ -13,6 +14,7 @@ mkdoc --- build a webpage out of a single markdown or mdsvex document.
 
   mkdoc build <document>    write a static page (the default command)
   mkdoc dev <document>      serve the document, rebuilding it as you type
+  mkdoc dev <directory>     browse a directory, serving each document you open
 
 Build options
   -o, --out <dir>     where to write the page   (default: build/<document>)
@@ -72,15 +74,33 @@ async function main() {
         );
     }
 
-    const document = readDocument(targets[0]!);
+    const target = targets[0]!;
     // The flags win over the frontmatter, which wins over the guess made from
     // whether the document has a `<script>` block at all.
-    if (values.hydrate) document.hydrate = true;
-    if (values['no-hydrate']) document.hydrate = false;
+    const hydrate = values.hydrate ? true : values['no-hydrate'] ? false : undefined;
+    const port = values.port ? Number(values.port) : undefined;
+
+    if (fs.statSync(target, { throwIfNoEntry: false })?.isDirectory()) {
+        if (command != 'dev') {
+            throw new Error(
+                `mkdoc: \`${target}\` is a directory; \`mkdoc build\` builds one document at a time.`,
+            );
+        }
+        await serveDirectory(target, {
+            port,
+            host: values.host,
+            open: !values['no-open'],
+            hydrate,
+        });
+        return;
+    }
+
+    const document = readDocument(target);
+    if (hydrate !== undefined) document.hydrate = hydrate;
 
     if (command == 'dev') {
         await serveDocument(document, {
-            port: values.port ? Number(values.port) : undefined,
+            port,
             host: values.host,
             // Opening the browser is the default: this tool previews one
             // document, and the commonest way to see "nothing happens" is to

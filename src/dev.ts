@@ -1,6 +1,14 @@
 import fs from 'node:fs';
+import type http from 'node:http';
 import path from 'node:path';
-import { createLogger, createServer, mergeConfig, type Plugin, type ViteDevServer } from 'vite';
+import {
+    createLogger,
+    createServer,
+    mergeConfig,
+    type InlineConfig,
+    type Plugin,
+    type ViteDevServer,
+} from 'vite';
 
 import type { Document } from './document.js';
 import { mkdocConfig } from './vite.js';
@@ -41,7 +49,11 @@ const WATCHER_GRACE_MS = 400;
 // The watcher is preferred when it works, because it drives Svelte's hot update
 // and that preserves scroll position. The fallback only acts on a change the
 // watcher did not report.
-function watchDocument(document: Document): Plugin {
+//
+// `httpServer` is the server whose closing stops the poll. A standalone dev
+// server has its own; one mounted in a directory server has none, and is handed
+// the directory server's instead.
+function watchDocument(document: Document, httpServer?: http.Server): Plugin {
     const name = path.basename(document.filename);
     return {
         name: 'mkdoc:watch-document',
@@ -87,7 +99,7 @@ function watchDocument(document: Document): Plugin {
             }, POLL_INTERVAL_MS);
             poll.unref();
 
-            server.httpServer?.on('close', () => clearInterval(poll));
+            (httpServer ?? server.httpServer)?.on('close', () => clearInterval(poll));
         },
     };
 }
@@ -156,9 +168,7 @@ function quietHmrLogger() {
 // arrives again, instantly, on every save.
 export async function serveDocument(document: Document, options: DevOptions) {
     const server = await createServer(
-        mergeConfig(mkdocConfig(document, { watch: true }), {
-            customLogger: quietHmrLogger(),
-            plugins: [watchDocument(document)],
+        mergeConfig(devConfig(document), {
             server: {
                 port: options.port,
                 host: options.host,
@@ -168,7 +178,6 @@ export async function serveDocument(document: Document, options: DevOptions) {
                 // old one shows a stale page that never updates --- which looks
                 // exactly like a broken watcher.
                 strictPort: options.port !== undefined,
-                watch: { usePolling: true, interval: POLL_INTERVAL_MS },
             },
         }),
     );
@@ -184,4 +193,14 @@ export async function serveDocument(document: Document, options: DevOptions) {
     }
     server.printUrls();
     return server;
+}
+
+// What every dev server for a document shares, standalone or mounted in a
+// directory server.
+export function devConfig(document: Document, httpServer?: http.Server): InlineConfig {
+    return mergeConfig(mkdocConfig(document, { watch: true }), {
+        customLogger: quietHmrLogger(),
+        plugins: [watchDocument(document, httpServer)],
+        server: { watch: { usePolling: true, interval: POLL_INTERVAL_MS } },
+    });
 }
