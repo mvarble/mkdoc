@@ -114,7 +114,7 @@ function packageNameOf(id: string): string {
 // Packages the template pulls stylesheets --- and through them, font files ---
 // out of. A package manager that hoists dependencies installs these beside this
 // package rather than inside it, where the dev server would refuse the fonts.
-const STYLE_PACKAGES = ['katex', '@fontsource/fira-mono'];
+const STYLE_PACKAGES = ['katex', '@fontsource/fira-mono', '@mvarble/mesearch-markdown'];
 const require = createRequire(import.meta.url);
 const packageRoot = (name: string) => path.dirname(require.resolve(`${name}/package.json`));
 

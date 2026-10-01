@@ -1,30 +1,19 @@
-import { mdsvex, type MdsvexOptions } from 'mdsvex';
-import remarkMath from 'remark-math';
-import remarkFrontmatter from 'remark-frontmatter';
+import { markdownPreprocessors as sharedPreprocessors } from '@mvarble/mesearch-markdown';
 
-import { rehypeKatex } from './katex.js';
-import { rehypeAssets, hoistAssetImports } from './assets.js';
-import { rehypeMathBox } from './mathbox.js';
-import { highlight } from './highlight.js';
+export { DOCUMENT_EXTENSIONS } from '@mvarble/mesearch-markdown';
 
-export const DOCUMENT_EXTENSIONS = ['.svx', '.md'];
-
-// The whole reason this tool exists: one parser configuration, baked in, rather
-// than re-derived per project. Order matters --- `rehypeAssets` has to see the
-// tree after KaTeX has run, so that nothing it rewrote is mistaken for an asset.
+// The parser configuration --- KaTeX with the base macro table, display math in
+// scroll boxes, Shiki with fenced file imports, relative assets turned into
+// Vite imports --- is shared with mesearch and the blog, so that a document
+// renders the same in all three.
 export interface PreprocessorOptions {
     /** Set while the dev server is running: diagnostics repeat on every rebuild. */
     watch?: boolean;
 }
 
 export function markdownPreprocessors(options: PreprocessorOptions = {}) {
-    return [
-        mdsvex({
-            extensions: DOCUMENT_EXTENSIONS,
-            remarkPlugins: [remarkFrontmatter, remarkMath],
-            rehypePlugins: [[rehypeKatex, { watch: options.watch }], rehypeMathBox, rehypeAssets],
-            highlight: { highlighter: highlight },
-        } as MdsvexOptions),
-        hoistAssetImports,
-    ];
+    return sharedPreprocessors({
+        katex: { label: 'mkdoc', watch: options.watch },
+        watch: options.watch,
+    });
 }
