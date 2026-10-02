@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@mvarble/mesearch-markdown@0.1.0'
