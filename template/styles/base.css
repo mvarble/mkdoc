@@ -11,7 +11,9 @@ html {
 body {
     margin: 0;
     color: var(--fg-1);
-    font: var(--font-body);
+    font: 400 var(--font-size-body) / var(--line-height-body) var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 ::selection {

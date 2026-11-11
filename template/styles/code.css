@@ -1,5 +1,6 @@
 code {
-    font: var(--font-mono);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-mono);
     background-color: var(--bg-2);
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
@@ -7,8 +8,10 @@ code {
 }
 
 pre.shiki {
-    font: var(--font-mono);
-    --shiki-bg: hsl(var(--fg-accent-hue), 40%, 98%);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    --shiki-bg: var(--code-background);
     padding: 1em;
     margin: 1.5em 0;
     overflow-x: auto;
@@ -28,7 +31,7 @@ pre.shiki code {
 @media (prefers-color-scheme: dark) {
     .shiki,
     .shiki span {
-        --shiki-dark-bg: hsl(var(--fg-accent-hue), 30%, 13%) !important;
+        --shiki-dark-bg: var(--code-background) !important;
         color: var(--shiki-dark) !important;
         background-color: var(--shiki-dark-bg) !important;
         font-style: var(--shiki-dark-font-style) !important;

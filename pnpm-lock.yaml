@@ -8,12 +8,21 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/inter':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/source-serif-4':
+        specifier: ^5.3.1
+        version: 5.3.1
       '@fontsource/fira-mono':
         specifier: ^5.3.0
         version: 5.3.0
       '@mvarble/mesearch-markdown':
         specifier: ^0.1.0
         version: 0.1.0(svelte@5.56.10)
+      '@mvarble/mesearch-ui':
+        specifier: ^0.2.1
+        version: 0.2.1(svelte@5.56.10)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.1.2
         version: 7.3.0(svelte@5.56.10)(vite@8.2.2(@types/node@22.20.1))
@@ -51,6 +60,12 @@ importers:
 
 packages:
 
+  '@fontsource-variable/inter@5.3.0':
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
+
+  '@fontsource-variable/source-serif-4@5.3.1':
+    resolution: {integrity: sha512-4Rtay22SC4lMvw11r/+9kxANB6P3M0X8s1NudBC2v0J1KU2y3DcMoNcT3lBoZ/CqLirzf+StlO6UlJilyrvaUg==}
+
   '@fontsource/fira-mono@5.3.0':
     resolution: {integrity: sha512-FZzRwKhpoXQU1uhEGKUg5AHUUdfiaTXxGCdBBeGHUmcZaqEDEmndSVvpXHkSViH25f/UiWfhcWTib+6A8o4qeQ==}
 
@@ -72,6 +87,12 @@ packages:
 
   '@mvarble/mesearch-markdown@0.1.0':
     resolution: {integrity: sha512-mwPtHS6k7NQGoIUvq8pQnX8PaNAvHxTYVReE0ireNncAybbFPpL+QPXkQhPwteJ6AHQs3eT1kHLP2usgEJDaJA==}
+    engines: {node: '>=22.18'}
+    peerDependencies:
+      svelte: ^5.0.0
+
+  '@mvarble/mesearch-ui@0.2.1':
+    resolution: {integrity: sha512-edIJdmyCD9Ej/+aIkk8/bpoEjTlUc/dOSRUZSq+iU2y843riE+Kj9pEvbtELk/HJ5HWL6SptlDhnyByftBcfvg==}
     engines: {node: '>=22.18'}
     peerDependencies:
       svelte: ^5.0.0
@@ -283,6 +304,22 @@ packages:
   commander@8.3.0:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
+
+  d3-dispatch@3.0.2:
+    resolution: {integrity: sha512-sAzH4Y4nsLo8eSqw5jKiZt+LU2wZmL/qS+OkxQGjhwazB/D7TY34R/QK1eshfGr7cZEKymKZ/Haem7m+lu98Sg==}
+    engines: {node: '>=12'}
+
+  d3-force@3.0.1:
+    resolution: {integrity: sha512-kAaaHLFebBYwgi5cYBXAI8vKrQFMCD2MEswj2QuPKKbdU1wYLc8WXtS7O8F/b6POCIe3gJjY6hkDstHi1yMETQ==}
+    engines: {node: '>=12'}
+
+  d3-quadtree@3.0.2:
+    resolution: {integrity: sha512-9Lu9mqJKRbIk0d6mKDjpvPURaPdwHVK5CYbcdd0/4vBgz4ldz/7TIOse3kNERsByGNfld58KEco507AztJWyTQ==}
+    engines: {node: '>=12'}
+
+  d3-timer@3.0.2:
+    resolution: {integrity: sha512-1Il1aliroVSErrv5aulRBxAY+7+DnaoLIWGd1C6SsBTWDeobWiP/V69vwb8vT6abR1kKwaNe1196pmaQ1fK90A==}
+    engines: {node: '>=12'}
 
   deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
@@ -659,6 +696,10 @@ packages:
 
 snapshots:
 
+  '@fontsource-variable/inter@5.3.0': {}
+
+  '@fontsource-variable/source-serif-4@5.3.1': {}
+
   '@fontsource/fira-mono@5.3.0': {}
 
   '@jridgewell/gen-mapping@0.3.13':
@@ -687,6 +728,16 @@ snapshots:
       remark-frontmatter: 2.0.0
       remark-math: 3.0.0
       shiki: 4.4.3
+      svelte: 5.56.10
+
+  '@mvarble/mesearch-ui@0.2.1(svelte@5.56.10)':
+    dependencies:
+      '@fontsource-variable/inter': 5.3.0
+      '@fontsource-variable/source-serif-4': 5.3.1
+      '@fontsource/fira-mono': 5.3.0
+      '@mvarble/mesearch-markdown': 0.1.0(svelte@5.56.10)
+      d3-force: 3.0.1
+      katex: 0.18.4
       svelte: 5.56.10
 
   '@oxc-project/types@0.146.0': {}
@@ -834,6 +885,18 @@ snapshots:
   comma-separated-tokens@2.0.3: {}
 
   commander@8.3.0: {}
+
+  d3-dispatch@3.0.2: {}
+
+  d3-force@3.0.1:
+    dependencies:
+      d3-dispatch: 3.0.2
+      d3-quadtree: 3.0.2
+      d3-timer: 3.0.2
+
+  d3-quadtree@3.0.2: {}
+
+  d3-timer@3.0.2: {}
 
   deepmerge@4.3.1: {}
 

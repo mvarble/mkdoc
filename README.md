@@ -139,4 +139,5 @@ node dist/cli.js dev example/measures.md
 ```
 
 `src/` is the CLI: `dev.ts` and `directory.ts` are the two dev servers, `document.ts` reads the frontmatter that configures the build, `modules.ts` reads the `mkdoc.modules` list, `vite.ts` assembles the Vite config both commands share, and `markdown/` configures the parser. The parser itself --- the KaTeX, display-math, highlighting and asset plugins --- is [`@mvarble/mesearch-markdown`](https://github.com/mvarble/mesearch/tree/main/packages/markdown), which mesearch and the blog use too, so a document renders the same in all three.
+The look --- fonts, colours, sizes --- is the tokens of [`@mvarble/mesearch-ui`](https://github.com/mvarble/mesearch/tree/main/packages/ui), which `template/styles/tokens.css` aliases; override any of them from a `css` stylesheet.
 `template/` is the page itself --- the HTML shell, the Svelte layout and the stylesheets --- and is consumed by Vite at runtime rather than compiled by `tsc`.

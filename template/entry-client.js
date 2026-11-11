@@ -1,5 +1,5 @@
 import 'katex/dist/katex.min.css';
-import '@fontsource/fira-mono';
+import '@mvarble/mesearch-ui/fonts';
 import './styles/index.css';
 import 'virtual:mkdoc/styles';
 
